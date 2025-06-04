@@ -1,0 +1,4 @@
+Este repositorio tiene la intención de "ALMACENAR" los trabajos en equipo del primer curso en el máster de
+bioinformática .
+Cada carpeta es nombrada de acuerdo a la materia correspondiente y en ella se encontran la actividad correspondiente 
+así como diversos archivos como utilizados para su realización. 
