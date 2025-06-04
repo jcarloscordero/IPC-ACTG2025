@@ -1,0 +1,37 @@
+# 1. Nos vamos a la terminal y checamos si es que ya tenemos intalado git
+
+carlos@MacBook-Air-de-Carlos ~ % git --version
+git version 2.39.5 (Apple Git-154)
+carlos@MacBook-Air-de-Carlos ~ % 
+
+# Confirmamamos que tenemos instalado git en la version 2.39.5, así que podemos continuar trabajando desde bash.
+
+# 2. Veremos con que user estamos trabajando en gitbash con el siguiente comando
+carlos@MacBook-Air-de-Carlos ~ % git config --list
+credential.helper=osxkeychain
+init.defaultbranch=main
+
+# Como ese no es el usuario de GitHub con el que estamos trabajando procederemos a modificarlo desde bash para
+# que podamos seguir trabajando desde la terminal, y esto lo haremos con el siguiente comando. 
+
+carlos@MacBook-Air-de-Carlos ~ % git config --global user.name "jcarloscordero"
+
+# Corroboramos que ya este dado de alta el usuario
+
+carlos@MacBook-Air-de-Carlos ~ % git config --list
+credential.helper=osxkeychain
+init.defaultbranch=main
+user.name=jcarloscordero  # aqui nos muestra el usuario
+
+# Ahora agregamos un correo para el usuario creado con el siguiente comando 
+
+carlos@MacBook-Air-de-Carlos ~ % git config --global user.email "carloscorderocortes@gmail.com"
+
+# y lo corroboramos con este comando 
+carlos@MacBook-Air-de-Carlos ~ % git config --list
+credential.helper=osxkeychain
+init.defaultbranch=main
+user.name=jcarloscordero
+user.email=carloscorderocortes@gmail.com #Aqui observamos que está creado el correo. 
+carlos@MacBook-Air-de-Carlos ~ % 
+
