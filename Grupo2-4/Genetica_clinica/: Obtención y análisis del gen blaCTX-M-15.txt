@@ -1,0 +1,15 @@
+# Descripción
+
+## La creciente amenaza de la resistencia antimicrobiana representa uno de los principales desafíos para 
+## la salud pública a nivel mundial. Entre los mecanismos moleculares responsables de esta resistencia,
+## los genes que codifican para β-lactamasas de espectro extendido (BLEE) han cobrado especial relevancia.
+## Dentro de esta familia, el gen blaCTX-M-15 ha sido identificado con alta frecuencia en cepas de Escherichia coli,
+## Klebsiella pneumoniae y otros patógenos oportunistas, mostrando capacidad para hidrolizar cefalosporinas de tercera
+## generación y dificultar los tratamientos clínicos estándar.
+
+# Justificación 
+## El análisis bioinformático de genes como blaCTX-M-15 permite caracterizar su secuencia, 
+## estructura codificante, relaciones filogenéticas y posibles elementos genéticos móviles que los rodean,
+## como plásmidos, transposones o integrones. Este tipo de análisis, que integra múltiples herramientas ómicas, 
+## ofrece una aproximación integral para entender la diseminación de la resistencia desde una perspectiva genómica
+## y evolutiva.
