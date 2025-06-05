@@ -35,3 +35,31 @@ user.name=jcarloscordero
 user.email=carloscorderocortes@gmail.com #Aqui observamos que está creado el correo. 
 carlos@MacBook-Air-de-Carlos ~ % 
 
+# Crearemos un repositorio remoto para trabajar con este repositorio en bash con el siguiete comando
+
+# Primero creamo un directorio nuevo 
+
+carlos@MacBook-Air-de-Carlos ~ % mkdir Repositorio-Remoto
+
+# Procedemos a clonar el repocitorio de GitHub 
+
+carlos@MacBook-Air-de-Carlos ~ %  git clone https://github.com/jcarloscordero/IPC-ACTG2025.git Repositorio-Remoto/
+Cloning into 'Repositorio-Remoto'...
+remote: Enumerating objects: 21, done.
+remote: Counting objects: 100% (21/21), done.
+remote: Compressing objects: 100% (18/18), done.
+remote: Total 21 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (21/21), 7.33 KiB | 1.83 MiB/s, done.
+carlos@MacBook-Air-de-Carlos ~ % 
+
+#Comprobamos que el repositorio se haya clonado correctamente. 
+
+carlos@MacBook-Air-de-Carlos ~ % cd Repositorio-Remoto/
+carlos@MacBook-Air-de-Carlos Repositorio-Remoto % ls -l
+total 16
+drwxr-xr-x  5 carlos  staff   160  5 jun 01:37 Grupo2-4
+-rw-r--r--  1 carlos  staff  1071  5 jun 01:37 LICENSE
+-rw-r--r--  1 carlos  staff   174  5 jun 01:37 README.md
+carlos@MacBook-Air-de-Carlos Repositorio-Remoto % 
+
+# Desde aqui podemos trabajar en el ropositorio logal y posteriormente puedemos contemplar fusionarlo con el repositorio remoto. 
