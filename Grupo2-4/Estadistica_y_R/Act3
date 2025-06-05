@@ -1,0 +1,138 @@
+
+---
+title: "Estadística y R para Ciencias de la Salud \n Resolución Actividad 3"
+author: "Grupo 2-4"
+date: "2025-05-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 1. Carga y preprocesado del dataset
+
+```{r}
+# Cargar librerías necesarias
+library(tidyverse)
+library(gtsummary)
+library(factoextra)
+library(pheatmap)
+library(ggplot2)
+library(glmnet)
+
+# Cargar los datos del archivo CSV
+data <- read.csv("~/Documentos/practicas_asignatura/Estadística_y_R/R_estadistica_act_3/Dataset expresión genes.csv")
+
+# Seleccionar los nombres de columnas que representan genes (comienzan con "AQ_")
+gene_columns <- grep("^AQ_", names(data), value = TRUE)
+
+# Crear matriz con datos de expresión de genes
+genes_matrix <- data[, gene_columns]
+```
+
+## 2. PCA y varianza explicada
+
+```{r}
+# Realizar Análisis de Componentes Principales (PCA) sobre los genes, estandarizando los datos
+pca_result <- prcomp(genes_matrix, scale. = TRUE)
+
+# Calcular la varianza explicada por cada componente
+var_exp <- pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+# Calcular la varianza acumulada
+cumsum_var_exp <- cumsum(var_exp)
+
+# Crear tabla con R2 individual y acumulado para cada componente principal
+tabla_pca_r2 <- data.frame(
+  Componente = paste0("PC", 1:length(var_exp)),
+  R2 = round(var_exp, 4),
+  R2_acumulado = round(cumsum_var_exp, 4)
+)
+tabla_pca_r2[1:5, ]
+
+```
+
+### Interpretación:
+Esta tabla muestra la proporción de varianza explicada (R²) por los primeros cinco componentes principales. Un valor más alto de R² indica que el componente captura mejor la variabilidad de la expresión génica. Se observa cómo los primeros componentes capturan la mayor parte de la variabilidad total del dataset.
+
+
+```{r}
+# Graficar la varianza explicada por cada componente
+fviz_eig(pca_result, addlabels = TRUE, ylim = c(0, 50))
+
+```
+
+### Interpretación:
+El gráfico de varianza explicada (scree plot) permite visualizar cuántos componentes principales son necesarios para representar adecuadamente la variabilidad del conjunto de datos. Normalmente se seleccionan aquellos que acumulan más del 70% de la varianza total. Esto ayuda a reducir dimensionalidad sin perder demasiada información.
+
+
+## 3. Visualización PCA: biplot por metástasis
+
+```{r}
+# Crear variable binaria para metástasis (1 si es "metastasico", 0 en caso contrario)
+data$metastasis_bin <- ifelse(data$extension == "metastasico", 1, 0)
+
+# Visualizar el PCA coloreado según presencia de metástasis
+fviz_pca_ind(pca_result,
+             geom.ind = "point",
+             habillage = factor(data$metastasis_bin, labels = c("No", "Sí")),
+             palette = c("#00AFBB", "#FC4E07"),
+             addEllipses = TRUE,
+             legend.title = "Metástasis")
+
+```
+
+### Interpretación:
+Este gráfico biplot del PCA muestra la proyección de los individuos (pacientes) sobre los dos primeros componentes principales, coloreando según la presencia de metástasis. Se incluyen elipses de confianza para evaluar visualmente si hay separación clara entre grupos con y sin metástasis. Un agrupamiento visible sugeriría que la expresión génica difiere según el estado metastásico.
+```
+
+## 4. Tabla descriptiva por terciles de PC1
+
+```{r}
+# Extraer valores del primer componente principal (PC1) para cada paciente
+data$PC1 <- pca_result$x[, 1]
+
+# Categorizar PC1 en tres grupos (terciles) según su valor
+data$PC1_terciles <- cut(data$PC1,
+                         breaks = quantile(data$PC1, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
+                         include.lowest = TRUE,
+                         labels = c("T1", "T2", "T3"))
+
+# Crear tabla descriptiva para los genes según los terciles de PC1
+tabla_terciles <- data %>%
+  tbl_summary(
+    by = PC1_terciles,
+    include = all_of(gene_columns[1:10]),
+    statistic = all_continuous() ~ "{median} ({p25} a {p75})",
+    digits = all_continuous() ~ 3,
+    missing = "no"
+  ) %>%
+  # Añadir pruebas de Kruskal-Wallis para evaluar diferencias entre terciles
+  add_p(test = all_continuous() ~ "kruskal.test",
+        pvalue_fun = ~style_pvalue(.x, digits = 3))
+
+tabla_terciles
+```
+
+### Interpretación:
+La tabla presenta las estadísticas descriptivas (mediana y rango intercuartílico) de los primeros 10 genes agrupados según terciles del componente principal 1 (PC1). Las pruebas de Kruskal-Wallis evalúan si existen diferencias significativas en la expresión de los genes entre los terciles. Valores p < 0.05 indican diferencias estadísticamente significativas.
+
+
+## 5. Modelo de regresión logística penalizado (Ridge)
+
+```{r}
+# Preparar matrices de diseño
+X <- model.matrix(~ PC1_terciles + edad + sexo + trat, data)[, -1]
+y <- data$metastasis_bin
+
+# Ajustar modelo de regresión logística penalizada (Ridge) usando validación cruzada
+ridge_model <- cv.glmnet(X, y, family = "binomial", alpha = 0)
+
+# Extraer los coeficientes del modelo Ridge para el valor óptimo de lambda
+coeficientes <- coef(ridge_model, s = "lambda.min")
+coeficientes
+```
+
+### Interpretación:
+Este resultado muestra los coeficientes del modelo de regresión logística penalizado (Ridge) ajustado para predecir la presencia de metástasis a partir de los terciles de PC1 y otras variables clínicas. El modelo regularizado ayuda a controlar el sobreajuste y selecciona aquellas variables que aportan más información al modelo predictivo.
