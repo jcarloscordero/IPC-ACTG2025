@@ -1,0 +1,7 @@
+Actividad 3 grupo 2-4
+
+1. Clonación del repositorio y crar rama
+2. Cración de un directorio en la rama
+3. Creación de un fichero en el directorio 
+4. commit en la rama
+5. Push repositorio main
