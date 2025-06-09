@@ -30,3 +30,15 @@ COMANDOS usados desde la consola de linux
   202  [2025-06-09 15:58:30] git status
   203  [2025-06-09 15:59:12] git add -A
 
+
+
+git push origin alex_martinez
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (5/5), 994 bytes | 165.00 KiB/s, done.
+Total 5 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/jcarloscordero/IPC-ACTG2025.git
+   8750ba4..9b6ff69  alex_martinez -> alex_martinez
