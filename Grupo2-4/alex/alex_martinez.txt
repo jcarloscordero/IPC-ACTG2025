@@ -5,3 +5,28 @@ Actividad 3 grupo 2-4
 3. Creación de un fichero en el directorio 
 4. commit en la rama
 5. Push repositorio main
+
+
+COMANDOS usados desde la consola de linux
+
+ 174  [2025-06-08 19:56:01] mkdir alex
+  175  [2025-06-08 19:56:03] ls -ltra
+  176  [2025-06-08 19:56:20] mv alex_martinez.txt alex
+  177  [2025-06-08 19:57:26] git commit -m "creacion de una rama, creacion de un directorio y un fichero"
+  178  [2025-06-08 19:58:34] git add  -A
+  179  [2025-06-08 19:58:47] git status
+  180  [2025-06-08 19:58:53] git commit -m "Creación de una rama, directorio y archivo"
+  181  [2025-06-08 19:59:04] git push origin alex_martinez
+  182  [2025-06-08 20:08:43] git remote set-url origin git@github.com:jcarloscordero/IPC-ACTG2025.git
+  183  [2025-06-08 20:08:54] git push origin alex_martinez
+  184  [2025-06-08 20:10:33] git config --global user.name
+  185  [2025-06-08 20:10:33] git config --global user.email
+  186  [2025-06-08 20:10:51] git remote set-url origin https://github.com/jcarloscordero/IPC-ACTG2025.git
+  187  [2025-06-08 20:11:06] git push origin alex_martinez
+  188  [2025-06-08 20:16:10] git remote set-url origin https://github.com/jcarloscordero/IPC-ACTG2025.git
+  189  [2025-06-08 20:16:21] git push origin alex_martinez
+  190  [2025-06-09 15:30:56] git config --global credential.helper cache
+  191  [2025-06-09 15:37:56] git checkout alex_martinez
+  202  [2025-06-09 15:58:30] git status
+  203  [2025-06-09 15:59:12] git add -A
+
