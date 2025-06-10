@@ -1,0 +1,114 @@
+Codigo ejercicio secuenciación
+
+
+##Instaación de QIIME2
+conda update conda
+conda install wget
+
+#Creacion directorio 
+mkdir qiime2-atacama
+cd qiime2-atacama
+
+#descarga archivos y secuencias 
+get -O "sample-metadata.tsv" "https://data.qiime2.org/2023.9/tutorials/atacama-
+soils/sample_metadata.tsv"
+mkdir emp-paired-end-sequences
+
+
+wget -O "emp-paired-end-sequences/forward.fastq.gz"
+https://data.qiime2.org/2023.9/tutorials/atacama-soils/10p/forward.fastq.gz
+wget -O "emp-paired-end-sequences/reverse.fastq.gz"
+https://data.qiime2.org/2023.9/tutorials/atacama-soils/10p/reverse.fastq.gz
+wget -O "emp-paired-end-sequences/barcodes.fastq.gz"
+"https://data.qiime2.org/2023.9/tutorials/atacama-soils/10p/barcodes.fastq.gz"
+
+
+#crear el artefacto qiime2
+
+#El formato del artefacto (.qza) proporciona una estructura estandarizada para almacenar los datos junto con los metadatos asociados. Este formato permite que los resultados del análisis sean
+compartidos, reproducidos y utilizados por otras herramientas o módulos dentro de QIIME2.
+
+
+qiime tools import --type EMPPairedEndSequences --input-path emp-paired-end-sequences --output-
+path emp-paired-end-sequences.qza
+
+emp-paired-end-sequences.qza
+
+#Demultiplexear las reads:proceso de separar o dividir las secuencias de ADN o ARN obtenidas en la
+secuenciación en base a las secuencias de “códigos de barras” (barcodes o índices) que se han
+incorporado a cada muestra
+
+qiime demux emp-paired --m-barcodes-file sample-metadata.tsv --m-barcodes-column barcode-
+sequence --p-rev-comp-mapping-barcodes --i-seqs emp-paired-end-sequences.qza --o-per-sample-
+sequences demux-full.qza --o-error-correction-details demux-details.qza
+
+
+#crear una submuestra 
+qiime demux subsample-paired --i-sequences demux-full.qza --p-fraction 0.3 --o-subsampled-
+sequences demux-subsample.qza
+
+#se visualiza siempre con los qzv en: https://view.qiime2.org/
+
+
+qiime demux summarize --i-data demux-subsample.qza --o-visualization demux-subsample.qzv
+
+
+#filtrado de muestras de menos de 100reads
+
+
+qiime tools export --input-path demux-subsample.qzv --output-path ./demux-subsample/
+
+qiime demux filter-samples --i-demux demux-subsample.qza --m-metadata-file ./demux-
+subsample/per-sample-fastq-counts.tsv --p-where 'CAST([forward sequence count] AS INT) > 100' --o-
+filtered-demux demux.qza
+
+
+#revisar la calidad y realizar el denoising 
+qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trim-left-f 13 --p-trim-left-r 13 --p-
+trunc-len-f 150 --p-trunc-len-r 150 --o-table table.qza --o-representative-sequences rep-seqs.qza --o-
+denoising-stats denoising-stats.qza
+
+
+qiime feature-table summarize --i-table table.qza --o-visualization table.qzv --m-sample-metadata-file
+sample-metadata.tsv
+
+qiime feature-table tabulate-seqs --i-data rep-seqs.qza --o-visualization rep-seqs.qzv
+qiime metadata tabulate --m-input-file denoising-stats.qza --o-visualization denoising-stats.qzv
+
+
+#generación de un aarbol genealogico 
+
+qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs.qza --o-alignment aligned-rep-
+seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-
+tree rooted-tree.qza
+
+
+#calcular diversidad alfa y beta 
+
+qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.qza --p-sampling-
+depth 1103 --m-metadata-file sample-metadata.tsv --output-dir core-metrics-results
+Reemplaza el número que sigue a “--p-sampling-depth” 
+
+
+qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --
+m-metadata-file sample-metadata.tsv --o-visualization core-metrics-results/faith-pd-group-
+significance.qzv
+
+
+#Analisis permanova 
+qiime diversity beta-group-significance --i-distance-matrix core-metrics-
+results/unweighted_unifrac_distance_matrix.qza --m-metadata-file sample-metadata.tsv --m-
+metadata-column transect-name --o-visualization core-metrics-results/unweighted-unifrac-transect-
+name-significance.qzv --p-pairwise
+
+
+#grafico PCoA(Análisis de coordenadas principales)
+
+
+qiime emperor plot --i-pcoa core-metrics-results/unweighted_unifrac_pcoa_results.qza --m-metadata-
+file sample-metadata.tsv --p-custom-axes depth --o-visualization core-metrics-results/unweighted-
+unifrac-emperor-depth.qzv
+
+#se visualiza con 
+
+core-metrics-results/unweighted-unifrac-emperor-depth.qzv
